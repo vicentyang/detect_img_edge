@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>检测图像的边缘</title>
+    <script>
+    var image = new Image();
+
+    window.onload = function() {
+
+        image.onload = demo;
+
+        image.src = "qiyu_swim_001.png";
+
+    }
+
+    function demo() {
+
+        var canvas = document.getElementsByTagName('canvas')[0];
+
+        var context = canvas.getContext('2d');
+
+
+
+        // 在canvas上描画图像（之后检出的边缘图像会重叠之上）
+
+        context.drawImage(image, 0, 0);
+
+
+
+        // 获取图像数据
+
+        var input = context.getImageData(0, 0, canvas.width, canvas.height);
+
+
+
+        //生成盛放数据的空ImageData对象
+
+        var output = context.createImageData(canvas.width, canvas.height);
+
+
+
+        // 定义变量
+
+        // （这里使用了 input.width 与 input.height
+
+        // 使用了canvas.width 与 canvas.height时，
+
+        // 在高解像度的显示屏上的显示是不同的
+
+        var w = input.width,
+            h = input.height;
+
+        var inputData = input.data;
+
+        var outputData = output.data;
+
+
+        var firstPixels = []
+        var lastPixels = []
+        // 检测边缘
+        // 纵线  从左到右横扫
+        for (var x = 0; x < w; x += 1) {
+            var fistPixel = [x, 0]
+            var lastPixel = [x, 0]
+            for (var y = 0; y < h; y += 1) {
+
+
+
+                var rbga = []
+                var _rbga = 0
+
+                for (var c = 0; c <= 3; c += 1) {
+
+                    var i = (y * w + x) * 4 + c; // 第一个行 第一列的前3个像素
+                    _rbga = _rbga + inputData[i]
+                    rbga.push(inputData[i])
+                }
+
+                // 找到不是透明的像素
+                if (_rbga > 0) {
+
+                	// 已经找到第一个不是透明的像素
+                	if  (fistPixel[1] > 0) {
+                		lastPixel[1] = y
+                	} else {
+
+                		fistPixel[1] = y
+                		lastPixel[1] = y
+                	}
+                }
+
+
+
+                // outputData[(y*w + x)*4 + 3] = 255; // alpha
+
+
+                // inputData[]
+
+            }
+
+            if (fistPixel[1] > 0) {
+
+            	firstPixels.push(fistPixel)
+            }
+
+            if (lastPixel[1] > 0) {
+
+            	lastPixels.push(lastPixel)
+            }
+
+        }
+
+
+
+        //描画图像
+
+        // context.putImageData(output, 0, 0);thun
+
+        // console.log(firstPixels)
+
+        // context.beginPath();
+        // context.strokeStyle = 'blue';
+        context.fillStyle = 'red';
+        // context.moveTo(50, 50);
+
+        firstPixels.forEach(function(value) {
+        	console.log(value[0])
+
+        	context.fillRect(value[0], value[1], 1, 1);
+        	// context.lineTo(, );
+        })
+        lastPixels.forEach(function(value) {
+        	console.log(value[0])
+        	context.fillRect(value[0], value[1], 1, 1);
+
+        })
+
+        context.fill();
+
+    }
+    </script>
+</head>
+
+<body>
+    <h2>图像文件边缘检测演示及源代码</h2>
+    <h3>使用的图像</h3>
+    <p><img src="qiyu_swim_001.png" alt="Edge detection"></p>
+    <h3>在原来图像上描画使用canvas检测出的图像边缘</h3>
+    <canvas width="800" height="800"></canvas>
+</body>
+
+</html>
+<!-- refer
+		inputData:Uint8ClampedArray
+		包含着RGBA格式的整型数据，范围在0至255之间（包括255）。每个像素用4个1bytes值(按照红，绿，蓝和透明值的顺序; 这就是"RGBA"格式) 来代表。每个颜色值部份用0至255来代表。每个部份被分配到一个在数组内连续的索引，左上角像素的红色部份在数组的索引0位置。像素从左到右被处理，然后往下，遍历整个数组。
+		包含高度 × 宽度 × 4 bytes数据，索引值从0到(高度×宽度×4)-1
+ -->
