@@ -10,7 +10,7 @@
 
         image.onload = demo;
 
-        image.src = "qiyu_swim_001.png";
+        image.src = "wolf_mask0.png";
 
     }
 
@@ -79,7 +79,7 @@
 
                 // 找到不是透明的像素
                 if (_rbga > 0) {
-
+                    console.log(_rbga)
                 	// 已经找到第一个不是透明的像素
                 	if  (fistPixel[1] > 0) {
                 		lastPixel[1] = y
@@ -145,7 +145,7 @@
 <body>
     <h2>图像文件边缘检测演示及源代码</h2>
     <h3>使用的图像</h3>
-    <p><img src="qiyu_swim_001.png" alt="Edge detection"></p>
+    <p><img src="wolf_mask0.png" alt="Edge detection"></p>
     <h3>在原来图像上描画使用canvas检测出的图像边缘</h3>
     <canvas width="800" height="800"></canvas>
 </body>
